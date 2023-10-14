@@ -5,6 +5,7 @@ import Pin from "../../public/pin.svg";
 import Search from "../../public/search.svg";
 import Dots from "../../public/dots.svg";
 import Button, { Type } from "../button";
+import Checkbox from "../checkbox";
 
 function SearchBar(props: HTMLAttributes<HTMLInputElement> & { onSubmit?: HTMLAttributes<HTMLFormElement>["onSubmit"] }) {
     return <form onSubmit={(event) => {
@@ -21,7 +22,7 @@ function SearchBar(props: HTMLAttributes<HTMLInputElement> & { onSubmit?: HTMLAt
 }
 
 function More() {
-    return <button className="rounded-[10px] px-[23px] py-[10px] bg-vtb-gray text-[#6C6C6C] flex flex-row border-2 border-vtb-gray gap-1">
+    return <button className="rounded-[10px] px-[23px] py-1 bg-vtb-gray text-[#6C6C6C] flex flex-row border-2 border-vtb-gray gap-1">
         <span>Больше</span>
         <Image src={Dots} alt=""></Image>
     </button>
@@ -40,7 +41,7 @@ export default function Panel() {
     const credits = ["Консультация", "Оформление, выдача"] as const;
     const [creditsFlags, setCredits] = useState(credits.map((_, i) => i === 0) as unknown as ToBools<typeof credits>);
 
-    return <section className="px-[18px] py-[30px] w-1/3 absolute z-[200] bg-white rounded-[20px] top-[40px] left-[48px]" aria-label="Фильтры">
+    return <section className="px-[18px] py-[30px] w-1/3 absolute z-[200] bg-white rounded-[20px] top-[40px] left-[48px] overflow-y-scroll mb-10 max-h-full" aria-label="Фильтры">
         <SearchBar></SearchBar>
         <ul className="mt-5 sidebar-selects">
             <li>
@@ -79,49 +80,14 @@ export default function Panel() {
             </li>
             <li>
                 <h2>Перечень услуг</h2>
-                <h3>Обслуживание карт</h3>
-                <ul>
-                    {cards.map((el, i) => <li key={el}>
-                        <Button styleType={cardsFlags[i] ? Type.Active : Type.Unactive}
-                            onClick={() => {
-                                setCards((old) => {
-                                    old[i] = !old[i];
-                                    return [...old];
-                                })
-                            }}
-                        >
-                            {el}
-                        </Button>
-                    </li>)}
-                </ul>
-                <h3>Переводы</h3>
-                <ul>
-                    {
-                        transes.map((el, i) => <li key={el}>
-                            <Button styleType={transesFlags[i] ? Type.Active : Type.Unactive}
-                                onClick={() => {
-                                    setTranses((old) => {
-                                        old[i] = !old[i];
-                                        return [...old];
-                                    })
-                                }}
-                            >
-                                {el}
-                            </Button>
-                        </li>)
-                    }
+                <ul className="extra-select">
                     <li>
-                        <More />
-                    </li>
-                </ul>
-                <h3>Ипотечные кредиты</h3>
-                <ul>
-                    {
-                        credits.map((el, i) =>
-                            <li key={el}>
-                                <Button styleType={creditsFlags[i] ? Type.Active : Type.Unactive}
+                        <h3>Обслуживание карт</h3>
+                        <ul>
+                            {cards.map((el, i) => <li key={el}>
+                                <Button styleType={cardsFlags[i] ? Type.Active : Type.Unactive}
                                     onClick={() => {
-                                        setCredits((old) => {
+                                        setCards((old) => {
                                             old[i] = !old[i];
                                             return [...old];
                                         })
@@ -129,13 +95,70 @@ export default function Panel() {
                                 >
                                     {el}
                                 </Button>
-                            </li>
-                        )
-                    }
+                            </li>)}
+                        </ul>
+                    </li>
                     <li>
-                        <More />
+                        <h3>Переводы</h3>
+                        <ul>
+                            {
+                                transes.map((el, i) => <li key={el}>
+                                    <Button styleType={transesFlags[i] ? Type.Active : Type.Unactive}
+                                        onClick={() => {
+                                            setTranses((old) => {
+                                                old[i] = !old[i];
+                                                return [...old];
+                                            })
+                                        }}
+                                    >
+                                        {el}
+                                    </Button>
+                                </li>)
+                            }
+                            <li>
+                                <More />
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <h3>Ипотечные кредиты</h3>
+                        <ul>
+                            {
+                                credits.map((el, i) =>
+                                    <li key={el}>
+                                        <Button styleType={creditsFlags[i] ? Type.Active : Type.Unactive}
+                                            onClick={() => {
+                                                setCredits((old) => {
+                                                    old[i] = !old[i];
+                                                    return [...old];
+                                                })
+                                            }}
+                                        >
+                                            {el}
+                                        </Button>
+                                    </li>
+                                )
+                            }
+                            <li>
+                                <More />
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span className="underline text-[#6C6C6C]">Другие услуги</span>
                     </li>
                 </ul>
+            </li>
+            <li>
+                <h2>Дополнительная информация</h2>
+                <fieldset>
+                    <label className="flex flex-row text-xl gap-[18px]">
+                        <span className="w-fit">
+                            Доступность для маломобильных граждан
+                        </span>
+                        <Checkbox/>
+                    </label>
+                </fieldset>
             </li>
         </ul>
     </section>

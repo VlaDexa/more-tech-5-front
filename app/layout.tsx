@@ -37,16 +37,18 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="en">
+        <html lang="ru">
             <head>
-                <meta lang='ru'></meta>
+                <link rel="icon" type="image/png" sizes="32x32" href="https://online.vtb.ru/favicon-32x32.png" />
+                <link rel="icon" type="image/png" sizes="16x16" href="https://online.vtb.ru/favicon-16x16.png" />
+                <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#1592f7" />
             </head>
             <body className={[VTB_Font.className, "w-screen h-screen flex flex-col"].join(" ")}>
                 <header>
                     <Image src={VtbLogo} alt="ВТБ" height={64} className='ml-[10%]'></Image>
                 </header>
-                    {children}
-                </body>
+                {children}
+            </body>
         </html>
     )
 }

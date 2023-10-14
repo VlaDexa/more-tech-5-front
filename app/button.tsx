@@ -5,7 +5,7 @@ export enum Type {
 }
 
 function getClasses(type: Type): string {
-    const common = "py-[10px] px-[23px] rounded-[10px] transition-colors border-vtb-blue border-2 motion-reduced:transition-none";
+    const common = "py-1 px-[23px] rounded-[10px] transition-colors border-vtb-blue border-2 motion-reduced:transition-none";
     switch (type) {
         case Type.Active: return `${common} text-white bg-vtb-blue`;
         case Type.Unactive: return `${common} text-vtb-blue`;
