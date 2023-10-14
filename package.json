@@ -4,6 +4,7 @@
     "private": true,
     "scripts": {
         "dev": "next dev",
+        "prebuild": "openapi -i http://api.lapki.vladexa.ru:8000/api/v1/openapi.json -o openapi",
         "build": "next build",
         "start": "next start",
         "lint": "next lint"
@@ -12,17 +13,19 @@
         "@pbe/react-yandex-maps": "^1.2.5",
         "next": "13.5.4",
         "react": "^18",
-        "react-dom": "^18"
+        "react-dom": "^18",
+        "sharp": "^0.32.6"
     },
     "devDependencies": {
-        "@types/dom-view-transitions": "^1.0.2",
         "@tailwindcss/typography": "^0.5.10",
+        "@types/dom-view-transitions": "^1.0.2",
         "@types/node": "^20",
         "@types/react": "^18",
         "@types/react-dom": "^18",
         "autoprefixer": "^10",
         "eslint": "^8",
         "eslint-config-next": "13.5.4",
+        "openapi-typescript-codegen": "^0.25.0",
         "postcss": "^8",
         "tailwindcss": "^3",
         "typescript": "^5"

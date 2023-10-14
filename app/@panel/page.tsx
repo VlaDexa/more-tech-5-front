@@ -61,10 +61,11 @@ export default function Panel() {
         (async () => {
             console.log("fun");
             
-            const sales = await SalepointService.getSalePointMultiApiV1SalepointMultiGet(0, 2);
+            const sales = await fetch("http://api.lapki.vladexa.ru:8000/api/v1/salepoint/multi?skip=0&limit=2");
+            const salesJ = await sales.json();
             console.log("set");
             
-            setOffices(sales);
+            setOffices(salesJ);
         })()
     }, []);
 
@@ -309,7 +310,7 @@ export default function Panel() {
         </details>
         {offices ? <>
         <h2 className="mt-[30px] text-[#6C6C6C] text-normal">Ближайшие отделения</h2>
-        <ul>
+        <ul className="flex flex-col gap-[18px] mt-[22px]">
             {offices.map(el => <Office key={el.id} id={el.id} type={OfficeType.Office}/>)}
         </ul></>
             : <></>}

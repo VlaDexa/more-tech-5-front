@@ -20,9 +20,7 @@ export default function Map() {
     }, []);
 
     useEffect(() => {
-        console.log("Position ", position)
         if (!mapRef.current) { return; }
-        console.log("Got map")
         mapRef.current.panTo(position, {
             safe: true,
             flying: false
