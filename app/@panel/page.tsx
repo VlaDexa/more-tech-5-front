@@ -24,7 +24,7 @@ function SearchBar(props: HTMLAttributes<HTMLInputElement> & { onSubmit?: HTMLAt
 }
 
 function More(props: { text: string }) {
-    return <button className="rounded-[10px] px-[23px] py-1 bg-vtb-gray text-[#6C6C6C] flex flex-row border-2 border-vtb-gray gap-1">
+    return <button className="rounded-[10px] px-[23px] py-1 bg-vtb-gray text-[#474747] flex flex-row border-2 border-vtb-gray gap-1">
         <span>{props.text}</span>
         <Image src={Dots} alt=""></Image>
     </button>

@@ -21,7 +21,7 @@ export default function Alert(props: { className?: string }) {
         iterations: 1,
         fill: "forwards"
     }),[]);
-    const timeShown = 5;
+    const timeShown = 20;
 
     useEffect(() => {
         window.addEventListener("more:dollar-alert", () => {
