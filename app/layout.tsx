@@ -20,6 +20,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <head>
+                <meta lang='ru'></meta>
             </head>
             <body className={[inter.className, "w-screen h-screen flex flex-col"].join(" ")}>
                     {children}
