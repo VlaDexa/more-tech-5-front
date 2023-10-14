@@ -41,7 +41,7 @@ export default function Panel() {
     const credits = ["Консультация", "Оформление, выдача"] as const;
     const [creditsFlags, setCredits] = useState(credits.map((_, i) => i === 0) as unknown as ToBools<typeof credits>);
 
-    return <section className="px-[18px] py-[30px] w-1/3 absolute z-[200] bg-white rounded-[20px] top-[40px] left-[48px] overflow-y-scroll mb-10 max-h-full" aria-label="Фильтры">
+    return <section className="px-[18px] py-[30px] w-1/3 absolute z-[200] bg-white rounded-[20px] top-[40px] left-[48px] overflow-y-scroll mb-10 h-[90%]" aria-label="Фильтры">
         <SearchBar></SearchBar>
         <ul className="mt-5 sidebar-selects">
             <li>
