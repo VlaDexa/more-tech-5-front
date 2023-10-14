@@ -7,6 +7,14 @@ li, ul, li::marker {
     list-style-type: none;
 }
 
+@media (prefers-reduced-motion) {
+	::view-transition-group(*),
+	::view-transition-old(*),
+	::view-transition-new(*) {
+		animation: none !important;
+	}
+}
+
 .sidebar-selects {
     font-weight: 400;
     gap: 30px;
