@@ -1,9 +1,10 @@
 "use client";
-import { HTMLAttributes, useState } from "react"
+import { HTMLAttributes, useCallback, useMemo, useState } from "react"
 import Image from "next/image";
 import Pin from "../../public/pin.svg";
 import Search from "../../public/search.svg";
 import Dots from "../../public/dots.svg";
+import Switch from "../../public/switch.svg";
 import Button, { Type } from "../button";
 import Checkbox from "../checkbox";
 
@@ -21,9 +22,9 @@ function SearchBar(props: HTMLAttributes<HTMLInputElement> & { onSubmit?: HTMLAt
     </form>
 }
 
-function More() {
+function More(props: { text: string }) {
     return <button className="rounded-[10px] px-[23px] py-1 bg-vtb-gray text-[#6C6C6C] flex flex-row border-2 border-vtb-gray gap-1">
-        <span>Больше</span>
+        <span>{props.text}</span>
         <Image src={Dots} alt=""></Image>
     </button>
 }
@@ -41,7 +42,15 @@ export default function Panel() {
     const credits = ["Консультация", "Оформление, выдача"] as const;
     const [creditsFlags, setCredits] = useState(credits.map((_, i) => i === 0) as unknown as ToBools<typeof credits>);
 
-    return <section className="px-[18px] py-[30px] w-1/3 absolute z-[200] bg-white rounded-[20px] top-[40px] left-[48px] overflow-y-scroll mb-10 h-[90%]" aria-label="Фильтры">
+    const workTimes = ["Работает сейчас", "Круглосуточно"] as const;
+    const [workFlags, setWorkTimes] = useState(workTimes.map(() => false) as unknown as ToBools<typeof workTimes>);
+    const extras = ["Поддержка NFC (бесконтактное обслуживание)", "Снятие наличных по QR-коду", "Платежи по QR-коду", "Оборудован для слабовидящих", "Доступность для маломобильных граждан"] as const;
+    const [extraFlags, setExtraFlags] = useState(extras.map(() => false) as unknown as ToBools<typeof extras>);
+
+    const alertEvent: Event = useMemo(() => new Event("more:dollar-alert"), []);
+    const showAlert = useCallback(() => window.dispatchEvent(alertEvent), [alertEvent]);
+
+    return <search className="px-[18px] py-[30px] w-1/3 absolute z-[200] bg-white rounded-[20px] top-[40px] left-[48px] overflow-y-scroll mb-10 h-[90%]" aria-label="Фильтры">
         <SearchBar></SearchBar>
         <ul className="mt-5 sidebar-selects">
             <li>
@@ -50,10 +59,18 @@ export default function Panel() {
                     {shows.map((el, i) => <li key={el}>
                         <Button styleType={showsFlags[i] ? Type.Active : Type.Unactive}
                             onClick={() => {
-                                setShows((old) => {
-                                    old[i] = !old[i];
+                                const change = () => setShows((old) => {
+                                    old[(i + 1) % 2] = false;
+                                    old[i] = true;
                                     return [...old];
-                                })
+                                });
+
+                                if (!document.startViewTransition) {
+                                    change();
+                                    return;
+                                }
+
+                                document.startViewTransition(change)
                             }}
                         >
                             {el}
@@ -61,51 +78,16 @@ export default function Panel() {
                     </li>)}
                 </ul>
             </li>
-            <li>
-                <h2>Ваш статус</h2>
-                <ul>
-                    {statuses.map((el, i) => <li key={el}>
-                        <Button styleType={statusesFlags[i] ? Type.Active : Type.Unactive}
-                            onClick={() => {
-                                setStatuses((old) => {
-                                    old[i] = !old[i];
-                                    return [...old];
-                                })
-                            }}
-                        >
-                            {el}
-                        </Button>
-                    </li>)}
-                </ul>
-            </li>
-            <li>
-                <h2>Перечень услуг</h2>
-                <ul className="extra-select">
-                    <li>
-                        <h3>Обслуживание карт</h3>
-                        <ul>
-                            {cards.map((el, i) => <li key={el}>
-                                <Button styleType={cardsFlags[i] ? Type.Active : Type.Unactive}
-                                    onClick={() => {
-                                        setCards((old) => {
-                                            old[i] = !old[i];
-                                            return [...old];
-                                        })
-                                    }}
-                                >
-                                    {el}
-                                </Button>
-                            </li>)}
-                        </ul>
-                    </li>
-                    <li>
-                        <h3>Переводы</h3>
-                        <ul>
-                            {
-                                transes.map((el, i) => <li key={el}>
-                                    <Button styleType={transesFlags[i] ? Type.Active : Type.Unactive}
+            {
+                showsFlags[0] ?
+                    <>
+                        <li>
+                            <h2>Ваш статус</h2>
+                            <ul>
+                                {statuses.map((el, i) => <li key={el}>
+                                    <Button styleType={statusesFlags[i] ? Type.Active : Type.Unactive}
                                         onClick={() => {
-                                            setTranses((old) => {
+                                            setStatuses((old) => {
                                                 old[i] = !old[i];
                                                 return [...old];
                                             })
@@ -113,53 +95,193 @@ export default function Panel() {
                                     >
                                         {el}
                                     </Button>
-                                </li>)
-                            }
-                            <li>
-                                <More />
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <h3>Ипотечные кредиты</h3>
-                        <ul>
-                            {
-                                credits.map((el, i) =>
-                                    <li key={el}>
-                                        <Button styleType={creditsFlags[i] ? Type.Active : Type.Unactive}
-                                            onClick={() => {
-                                                setCredits((old) => {
-                                                    old[i] = !old[i];
-                                                    return [...old];
-                                                })
-                                            }}
-                                        >
-                                            {el}
-                                        </Button>
-                                    </li>
-                                )
-                            }
-                            <li>
-                                <More />
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <span className="underline text-[#6C6C6C]">Другие услуги</span>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <h2>Дополнительная информация</h2>
-                <fieldset>
-                    <label className="flex flex-row text-xl gap-[18px]">
-                        <span className="w-fit">
-                            Доступность для маломобильных граждан
-                        </span>
-                        <Checkbox/>
-                    </label>
-                </fieldset>
-            </li>
+                                </li>)}
+                            </ul>
+                        </li>
+                        <li>
+                            <h2>Перечень услуг</h2>
+                            <ul className="extra-select">
+                                <li>
+                                    <h3>Обслуживание карт</h3>
+                                    <ul>
+                                        {cards.map((el, i) => <li key={el}>
+                                            <Button styleType={cardsFlags[i] ? Type.Active : Type.Unactive}
+                                                onClick={() => {
+                                                    setCards((old) => {
+                                                        old[i] = !old[i];
+                                                        return [...old];
+                                                    })
+                                                }}
+                                            >
+                                                {el}
+                                            </Button>
+                                        </li>)}
+                                    </ul>
+                                </li>
+                                <li>
+                                    <h3>Переводы</h3>
+                                    <ul>
+                                        {
+                                            transes.map((el, i) => <li key={el}>
+                                                <Button styleType={transesFlags[i] ? Type.Active : Type.Unactive}
+                                                    onClick={() => {
+                                                        setTranses((old) => {
+                                                            old[i] = !old[i];
+                                                            return [...old];
+                                                        })
+                                                    }}
+                                                >
+                                                    {el}
+                                                </Button>
+                                            </li>)
+                                        }
+                                        <li>
+                                            <More text="Больше" />
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <h3>Ипотечные кредиты</h3>
+                                    <ul>
+                                        {
+                                            credits.map((el, i) =>
+                                                <li key={el}>
+                                                    <Button styleType={creditsFlags[i] ? Type.Active : Type.Unactive}
+                                                        onClick={() => {
+                                                            setCredits((old) => {
+                                                                old[i] = !old[i];
+                                                                return [...old];
+                                                            })
+                                                        }}
+                                                    >
+                                                        {el}
+                                                    </Button>
+                                                </li>
+                                            )
+                                        }
+                                        <li>
+                                            <More text="Больше" />
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <span className="underline text-[#6C6C6C]">Другие услуги</span>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <h2>Дополнительная информация</h2>
+                            <fieldset>
+                                <label className="flex flex-row text-xl gap-[18px]">
+                                    <span>
+                                        Доступность для маломобильных граждан
+                                    </span>
+                                    <Checkbox />
+                                </label>
+                            </fieldset>
+                        </li>
+                    </>
+                    : <>
+                        <li>
+                            <h2>Операции</h2>
+                            <ul className="extra-select">
+                                <li>
+                                    <h3>Снять</h3>
+                                    <ul>
+                                        <li>
+                                            <Button styleType={Type.Active}>Рубли</Button>
+                                        </li>
+                                        <li>
+                                            <Button styleType={Type.Disabled} onClick={showAlert}>Доллары</Button>
+                                        </li>
+                                        <li>
+                                            <More text="Валюта"></More>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <h3>Внести</h3>
+                                    <ul>
+                                        <li>
+                                            <Button styleType={Type.Active}>Рубли</Button>
+                                        </li>
+                                        <li>
+                                            <Button styleType={Type.Disabled} onClick={showAlert}>Доллары</Button>
+                                        </li>
+                                        <li>
+                                            <More text="Валюта"></More>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <h2>Перечень услуг</h2>
+                            <ul className="extra-select">
+                                <li>
+                                    <h3>Переводы</h3>
+                                    <ul>
+                                        <li>
+                                            <Button styleType={Type.Active}>Рубли</Button>
+                                        </li>
+                                        <li>
+                                            <Button styleType={Type.Disabled} onClick={showAlert}>Доллары</Button>
+                                        </li>
+                                        <li>
+                                            <More text="Валюта"></More>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <h3>Обмен валюты</h3>
+                                    <ul>
+                                        <li>
+                                            <Button styleType={Type.Disabled} onClick={showAlert}>Рубли</Button>
+                                        </li>
+                                        <li>
+                                            <Image src={Switch} alt=""></Image>
+                                        </li>
+                                        <li>
+                                            <Button styleType={Type.Disabled} onClick={showAlert}>Доллары</Button>
+                                        </li>
+                                        <li>
+                                            <More text="Валюта"></More>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <span className="underline text-[#6C6C6C]">Другие услуги</span>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <h2>
+                                Время работы
+                            </h2>
+                            <fieldset className="flex flex-col gap-[10px]">
+                                        {workTimes.map((el, i) => <label key={el} className="flex flex-row text-xl gap-[18px]">
+                                            <span className="flex-grow">{el}</span>
+                                            <Checkbox onChange={() => setWorkTimes((old) => {
+                                                old[i] = !old[i]
+                                                return [...old];
+                                            })}></Checkbox>
+                                        </label>)}
+                            </fieldset>
+                            <h2>
+                                Дополнительная информация
+                            </h2>
+                            <fieldset className="flex flex-col gap-[10px]">
+                                        {extras.map((el, i) => <label key={el} className="flex flex-row text-xl gap-[18px]">
+                                            <span className="flex-grow">{el}</span>
+                                            <Checkbox onChange={() => setExtraFlags((old) => {
+                                                old[i] = !old[i]
+                                                return [...old];
+                                            })}></Checkbox>
+                                        </label>)}
+                            </fieldset>
+                        </li>
+                    </>
+            }
         </ul>
-    </section>
+    </search>
 }

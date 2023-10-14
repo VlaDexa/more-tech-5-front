@@ -4,6 +4,7 @@ import { Circle, Placemark, Map as YMap } from "@pbe/react-yandex-maps";
 import { useEffect, useRef, useState } from "react";
 import ymaps from "yandex-maps";
 import Panel from "./@panel/page";
+import Alert from "./alert";
 
 export default function Map() {
     const mapRef = useRef<ymaps.Map | undefined>(undefined);
@@ -38,6 +39,7 @@ export default function Map() {
 
     return <YMap state={{ center: position, zoom }} className="relative w-full h-full" instanceRef={mapRef}>
         <Panel></Panel>
+        <Alert className="block absolute top-[21rem] w-1/4 left-[39%] z-[200]"/>
         <Circle geometry={[position, zoom*200]} options={{
             draggable: false,
             fillOpacity: 1,
