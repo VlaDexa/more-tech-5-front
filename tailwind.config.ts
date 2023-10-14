@@ -11,6 +11,7 @@ const config: Config = {
     colors: {
         'vtb-blue': "#1E4BD2",
         'white': "#FFFFFF",
+        'vtb-gray': "#ECECEC"
     },
     extend: {
       backgroundImage: {
