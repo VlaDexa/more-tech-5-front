@@ -2,6 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
+li, ul, li::marker {
+    appearance: none;
+    list-style-type: none;
+}
+
+.sidebar-selects {
+    font-weight: 400;
+    gap: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-selects > ul {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sidebar-selects > ul > li {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.sidebar-selects h2 {
+    font-size: 1rem/* 16px */;
+    line-height: 1.5rem/* 24px */;
+    color: rgb(108 108 108);
+}
+
+.sidebar-selects h3 {
+    font-size: 1.25rem/* 20px */;
+    line-height: 1.75rem/* 28px */;
+    color: rgb(43 43 43);
+}
+
 /* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;

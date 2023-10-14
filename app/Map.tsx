@@ -3,6 +3,7 @@
 import { Circle, Placemark, Map as YMap } from "@pbe/react-yandex-maps";
 import { useEffect, useRef, useState } from "react";
 import ymaps from "yandex-maps";
+import Panel from "./@panel/page";
 
 export default function Map() {
     const mapRef = useRef<ymaps.Map | undefined>(undefined);
@@ -35,8 +36,9 @@ export default function Map() {
         })
     });
 
-    return <YMap state={{ center: position, zoom }} className="w-full h-full p-4" instanceRef={mapRef}>
-        <Circle geometry={[position, 2**(zoom)]} options={{
+    return <YMap state={{ center: position, zoom }} className="relative w-full h-full" instanceRef={mapRef}>
+        <Panel></Panel>
+        <Circle geometry={[position, zoom*200]} options={{
             draggable: false,
             fillOpacity: 1,
             strokeOpacity: 1,
