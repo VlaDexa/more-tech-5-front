@@ -35,13 +35,14 @@ export default function Panel() {
     const shows = ["Отделения", "Банкоматы"] as const;
     const [showsFlags, setShows] = useState(shows.map((_, i) => i === 0) as unknown as ToBools<typeof shows>);
     const statuses = ["Физическое лицо", "Прайм", "Юридическое лицо", "Привелегия"] as const;
-    const [statusesFlags, setStatuses] = useState(statuses.map((_, i) => i === 0) as unknown as ToBools<typeof statuses>);
+    const [statusesFlags, setStatuses] = useState(statuses.map(() => false) as unknown as ToBools<typeof statuses>);
     const cards = ["Кредитная карта", "Дебетовая карта"] as const;
-    const [cardsFlags, setCards] = useState(cards.map((_, i) => i === 0) as unknown as ToBools<typeof cards>);
+    const [cardsFlags, setCards] = useState(cards.map(() => false) as unknown as ToBools<typeof cards>);
     const transes = ["Рубли", "Доллары"] as const;
-    const [transesFlags, setTranses] = useState(transes.map((_, i) => i === 0) as unknown as ToBools<typeof transes>);
+    const [transesFlags, setTranses] = useState(transes.map(() => false) as unknown as ToBools<typeof transes>);
     const credits = ["Консультация", "Оформление, выдача"] as const;
-    const [creditsFlags, setCredits] = useState(credits.map((_, i) => i === 0) as unknown as ToBools<typeof credits>);
+    const [creditsFlags, setCredits] = useState(credits.map(() => false) as unknown as ToBools<typeof credits>);
+    const [lowMobility, setLowMobility] = useState(false);
 
     const workTimes = ["Работает сейчас", "Круглосуточно"] as const;
     const [workFlags, setWorkTimes] = useState(workTimes.map(() => false) as unknown as ToBools<typeof workTimes>);
@@ -181,7 +182,7 @@ export default function Panel() {
                                 <span>
                                     Доступность для маломобильных граждан
                                 </span>
-                                <Checkbox />
+                                <Checkbox onChange={(el) => setLowMobility(el.currentTarget.checked)}/>
                             </label>
                         </fieldset>
                     </li>
