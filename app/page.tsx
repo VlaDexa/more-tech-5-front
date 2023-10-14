@@ -2,10 +2,15 @@
 import { YMaps } from '@pbe/react-yandex-maps';
 import Map from "./Map";
 import { YANDEX_API } from './layout';
+import Button, { Type } from './button';
 
 export default function Home() {
     return <>
         <h1 className="w-full text-center text-4xl font-bold mt-4">Карта</h1>
+        <div className='flex flex-row gap-4'>
+        <Button styleType={Type.Active}>Отделения</Button>
+        <Button styleType={Type.Unactive}>Банкоматы</Button>
+        </div>
         <YMaps>
             <Map></Map>
         </YMaps>
