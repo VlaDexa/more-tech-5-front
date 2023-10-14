@@ -55,21 +55,28 @@ export default function Panel() {
     const showAlert = useCallback(() => window.dispatchEvent(alertEvent), [alertEvent]);
 
     
-    const [offices, setOffices] = useState<(SalepointShow & {id: string})[] | undefined>(undefined);
+    const [offices, setOffices] = useState<(SalepointShow & {id: string, distance_to_you: number})[] | undefined>(undefined);
     useEffect(() => {
-        console.log("effect");
-        (async () => {
-            console.log("fun");
-            
-            const sales = await fetch("http://api.lapki.vladexa.ru:8000/api/v1/salepoint/multi?skip=0&limit=2");
-            const salesJ = await sales.json();
-            console.log("set");
-            
-            setOffices(salesJ);
-        })()
+            const pos = navigator.geolocation.getCurrentPosition(async (suc) => {
+                const sales = await fetch("http://api.lapki.vladexa.ru:8000/api/v1/salepoint/distance", {
+                    "headers": {
+                      "accept": "application/json",
+                      "accept-language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
+                      "cache-control": "no-cache",
+                      "content-type": "application/json",
+                      "pragma": "no-cache"
+                    },
+                    "referrer": "http://api.lapki.vladexa.ru:8000/docs",
+                    "referrerPolicy": "strict-origin-when-cross-origin",
+                    "body": JSON.stringify([suc.coords.longitude, suc.coords.latitude]),
+                    "method": "POST",
+                    "mode": "cors",
+                    "credentials": "omit"
+                  });
+                  const salesJ = await sales.json();
+                  setOffices(salesJ);
+            }, () => {});
     }, []);
-
-    useEffect(() => {console.log(offices)}, [offices])
 
     return <search className="px-[18px] py-[30px] w-1/4 absolute z-[200] bg-white rounded-[20px] top-[40px] left-[48px] overflow-y-scroll mb-10 h-[90%]" aria-label="Фильтры">
         <SearchBar></SearchBar>
@@ -311,7 +318,7 @@ export default function Panel() {
         {offices ? <>
         <h2 className="mt-[30px] text-[#6C6C6C] text-normal">Ближайшие отделения</h2>
         <ul className="flex flex-col gap-[18px] mt-[22px]">
-            {offices.map(el => <Office key={el.id} id={el.id} type={OfficeType.Office}/>)}
+            {offices.map(el => <Office key={el.id} id={el.id} type={OfficeType.Office} distance={el.distance_to_you}/>)}
         </ul></>
             : <></>}
     </search >

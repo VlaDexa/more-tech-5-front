@@ -31,7 +31,7 @@ async function getInfo(id: string, type: Type): Promise<{ address: string, dista
     }
 }
 
-export default function Office(props: { id: string, type: Type }) {
+export default function Office(props: { id: string, type: Type, distance: number }) {
     const [info, setInfo] = useState<Awaited<ReturnType<typeof getInfo>> | undefined>(undefined);
     useEffect(() => { getInfo(props.id, props.type).then(info => setInfo(info)) }, [props.id, props.type]);
     const address = useMemo(() => <address className="flex flex-row rounded-[10px] hover:bg-vtb-gray group px-[10px] py-[6px]">
@@ -43,8 +43,8 @@ export default function Office(props: { id: string, type: Type }) {
                 Сильно загружен
             </span>}
         </div>
-        <span className="text-xl text-vtb-blue">{info?.distance} м</span>
-    </address>, [info?.address, info?.distance, info?.loaded]);
+        <span className="text-xl text-vtb-blue">{props.distance} м</span>
+    </address>, [info?.address, info?.loaded, props.distance]);
     console.log("info: ", info);
     return info ? address : <></>
 }
