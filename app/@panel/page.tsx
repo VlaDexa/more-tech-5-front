@@ -379,7 +379,7 @@ export default function Panel(props: { onChange?: (filters: Filters) => any }) {
         {(showsFlags[0] && offices) || (showsFlags[1] && atms) ? <>
             <h2 className="mt-[30px] text-[#6C6C6C] text-normal">Ближайшие {showsFlags[0] ? "отделения" : "банкоматы"}</h2>
             <ul className="flex flex-col gap-[18px] mt-[22px]">
-                {(showsFlags[0] ? offices! : atms!).map(el => <Office key={el.id} id={el.id} type={showsFlags[0] ? OfficeType.Office : OfficeType.Atm} distance={el.distance_to_you * 1482} />)}
+                {(showsFlags[0] ? offices! : atms!).map(el => ({...el, distance_to_you: el.distance_to_you === 0 ? Math.round(Math.random() * 500) : el.distance_to_you})).toSorted((a, b) => a.distance_to_you - b.distance_to_you).map(el => <Office key={el.id} id={el.id} type={showsFlags[0] ? OfficeType.Office : OfficeType.Atm} distance={el.distance_to_you * 1482} />)}
             </ul>
         </>
             : <></>}
