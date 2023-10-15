@@ -12,7 +12,12 @@ export enum Type {
 async function getInfo(id: string, type: Type): Promise<{ address: string, distance: number, loaded: boolean }> {
     switch (type) {
         case Type.Atm: {
-            const req = await fetch(`https://api.lapki.vladexa.ru:8000/api/v1/atms/?id=${id}`);
+            const req = await fetch(`https://api.lapki.vladexa.ru:8000/api/v1/atms/?id=${id}`, {
+                cache: "force-cache",
+                headers: {
+                    'Cache-Control': 'max-age=3600',
+                }
+            });
             const point: AtmShow = await req.json();
             return {
                 address: point.address,
@@ -21,7 +26,12 @@ async function getInfo(id: string, type: Type): Promise<{ address: string, dista
             }
         }
         case Type.Office: {
-            const req = await fetch(`https://api.lapki.vladexa.ru:8000/api/v1/salepoint/?id=${id}`);
+            const req = await fetch(`https://api.lapki.vladexa.ru:8000/api/v1/salepoint/?id=${id}`, {
+                cache: "force-cache",
+                headers: {
+                    'Cache-Control': 'max-age=3600',
+                }
+            });
             const point = await req.json();
             return {
                 address: point.address,
