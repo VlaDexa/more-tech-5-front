@@ -46,6 +46,6 @@ export default function Office(props: { id: string, type: Type, distance: number
         </div>
         <span className="text-xl text-vtb-blue">{props.distance} м</span>
     </address>, [info?.address, info?.loaded, props.distance]);
-    console.log("info: ", info);
+    // console.log("info: ", info);
     return info ? address : <></>
 }

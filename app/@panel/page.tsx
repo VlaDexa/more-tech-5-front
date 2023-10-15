@@ -8,7 +8,7 @@ import Switch from "../../public/switch.svg";
 import Button, { Type } from "../button";
 import Checkbox from "../checkbox";
 import { VTB_Font } from "../vtb_font";
-import { AtmShowWithDistance, AtmsService, SalepointService, SalepointShow, SalepointShowWithDistance } from "@/openapi";
+import { AtmShowWithDistance, SalepointShowWithDistance } from "@/openapi";
 import Office, { Type as OfficeType } from "../office";
 
 function SearchBar(props: HTMLAttributes<HTMLInputElement> & { onSubmit?: HTMLAttributes<HTMLFormElement>["onSubmit"] }) {
@@ -32,26 +32,75 @@ function More(props: { text: string }) {
     </button>
 }
 
-export default function Panel() {
+type OfficeFilters = {
+    type: "Отделения",
+    creditCard: boolean,
+    debitCard: boolean,
+    consultation: boolean,
+    issuing: boolean
+}
+
+type AtmFilters = {
+    type: "Банкоматы",
+    allDay: boolean,
+    wheelchair: boolean,
+    blind: boolean,
+    nfcForBankCards: boolean,
+    qrRead: boolean,
+    supportsUsd: boolean,
+    supportsChargeRub: boolean,
+    supportsEur: boolean,
+    supportsRub: boolean
+}
+
+type Union<T, V> = { [Property in keyof T]: T[Property] } | { [Property in keyof V]: V[Property] }
+
+export type Filters = Union<AtmFilters, OfficeFilters>;
+
+export default function Panel(props: { onChange?: (filters: Filters) => any }) {
     type ToBools<Type> = { -readonly [Property in keyof Type]: boolean };
-    const shows = ["Отделения", "Банкоматы"] as const;
+    const shows = useMemo(() => ["Отделения", "Банкоматы"] as const, []);
     const [showsFlags, setShows] = useState(shows.map((_, i) => i === 0) as unknown as ToBools<typeof shows>);
-    const statuses = ["Физическое лицо", "Прайм", "Юридическое лицо", "Привелегия"] as const;
+    const statuses = useMemo(() => ["Физическое лицо", "Прайм", "Юридическое лицо", "Привелегия"] as const, []);
     const [statusesFlags, setStatuses] = useState(statuses.map(() => false) as unknown as ToBools<typeof statuses>);
-    const cards = ["Кредитная карта", "Дебетовая карта"] as const;
+    const cards = useMemo(() => ["Кредитная карта", "Дебетовая карта"] as const, []);
     const [cardsFlags, setCards] = useState(cards.map(() => false) as unknown as ToBools<typeof cards>);
-    const transes = ["Рубли", "Доллары"] as const;
+    const transes = useMemo(() => ["Рубли", "Доллары"] as const, []);
     const [transesFlags, setTranses] = useState(transes.map(() => false) as unknown as ToBools<typeof transes>);
-    const credits = ["Консультация", "Оформление, выдача"] as const;
+    const credits = useMemo(() => ["Консультация", "Оформление, выдача"] as const, []);
     const [creditsFlags, setCredits] = useState(credits.map(() => false) as unknown as ToBools<typeof credits>);
     const [lowMobility, setLowMobility] = useState(false);
 
-    const workTimes = ["Работает сейчас", "Круглосуточно"] as const;
+    const workTimes = useMemo(() => ["Работает сейчас", "Круглосуточно"] as const, []);
     const [workFlags, setWorkTimes] = useState(workTimes.map(() => false) as unknown as ToBools<typeof workTimes>);
-    const extras = ["Поддержка NFC (бесконтактное обслуживание)", "Снятие наличных по QR-коду", "Платежи по QR-коду", "Оборудован для слабовидящих", "Доступность для маломобильных граждан"] as const;
+    const extras = useMemo(() => ["Поддержка NFC (бесконтактное обслуживание)", "Снятие наличных по QR-коду", "Платежи по QR-коду", "Оборудован для слабовидящих", "Доступность для маломобильных граждан"] as const, []);
     const [extraFlags, setExtraFlags] = useState(extras.map(() => false) as unknown as ToBools<typeof extras>);
 
     const alertEvent: Event = useMemo(() => new Event("more:dollar-alert"), []);
+
+    useEffect(() => {
+        props.onChange && props.onChange(
+            showsFlags[0] ? {
+                type: "Отделения",
+                creditCard: cardsFlags[0],
+                debitCard: cardsFlags[1],
+                consultation: creditsFlags[0],
+                issuing: creditsFlags[1],
+
+            } : {
+                type: "Банкоматы",
+                allDay: workFlags[1],
+                blind: extraFlags[3],
+                nfcForBankCards: extraFlags[0],
+                qrRead: extraFlags[1],
+                supportsEur: false,
+                supportsUsd: transesFlags[1],
+                supportsRub: transesFlags[0],
+                wheelchair: extraFlags[4],
+                supportsChargeRub: false,
+            }
+        )
+    }, [cardsFlags, creditsFlags, extraFlags, props, showsFlags, transesFlags, workFlags])
     const showAlert = useCallback(() => window.dispatchEvent(alertEvent), [alertEvent]);
 
 
@@ -87,8 +136,8 @@ export default function Panel() {
         }, () => { })
     }, [])
 
-    console.log('atms - ' , atms);
-    console.log('offices - ', offices)
+    // console.log('atms - ', atms);
+    // console.log('offices - ', offices)
 
     return <search className="px-[18px] py-[30px] w-1/4 absolute z-[200] bg-white rounded-[20px] top-[40px] left-[48px] overflow-y-scroll mb-10 h-[90%]" aria-label="Фильтры">
         <SearchBar></SearchBar>
