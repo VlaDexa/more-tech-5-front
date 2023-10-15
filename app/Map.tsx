@@ -56,7 +56,7 @@ export default function Map() {
     useEffect(() => {
         async function work() {
             if (filters.type === "Отделения") {
-                const req = await fetch("http://api.lapki.vladexa.ru:8000/api/v1/salepoint/filters", {
+                const req = await fetch("https://api.lapki.vladexa.ru:8000/api/v1/salepoint/filters", {
                     "headers": {
                         "accept": "application/json",
                         "content-type": "application/json",
@@ -74,7 +74,7 @@ export default function Map() {
                 const offices: SalepointShow[] = await req.json();
                 setOffices(offices)
             } else {
-                const req = await fetch("http://api.lapki.vladexa.ru:8000/api/v1/atms/filters", {
+                const req = await fetch("https://api.lapki.vladexa.ru:8000/api/v1/atms/filters", {
                     "headers": {
                         "accept": "application/json",
                         "content-type": "application/json",

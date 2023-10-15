@@ -4,7 +4,7 @@ import Map from "./Map";
 import { OpenAPI } from '@/openapi';
 
 export default function Home(props: {panel: React.ReactHTML}) {
-    OpenAPI.BASE = "http://api.lapki.vladexa.ru:8000"
+    OpenAPI.BASE = "https://api.lapki.vladexa.ru:8000"
 
     return <main className='relative w-full h-full'>
         <YMaps>

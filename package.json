@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "dev": "next dev",
-        "prebuild": "openapi -i http://api.lapki.vladexa.ru:8000/api/v1/openapi.json -o openapi",
+        "prebuild": "openapi -i https://api.lapki.vladexa.ru:8000/api/v1/openapi.json -o openapi",
         "build": "next build",
         "start": "next start",
         "lint": "next lint"

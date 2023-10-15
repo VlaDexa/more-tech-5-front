@@ -107,7 +107,7 @@ export default function Panel(props: { onChange?: (filters: Filters) => any }) {
     const [offices, setOffices] = useState<SalepointShowWithDistance[] | undefined>(undefined);
     useEffect(() => {
         navigator.geolocation.getCurrentPosition(async (suc) => {
-            const sales = await fetch("http://api.lapki.vladexa.ru:8000/api/v1/salepoint/distance", {
+            const sales = await fetch("https://api.lapki.vladexa.ru:8000/api/v1/salepoint/distance", {
                 "body": JSON.stringify([suc.coords.longitude, suc.coords.latitude]),
                 "headers": {
                     "content-type": "application/json"
@@ -123,7 +123,7 @@ export default function Panel(props: { onChange?: (filters: Filters) => any }) {
     useEffect(() => {
         navigator.geolocation.getCurrentPosition(async suc => {
 
-            const req = await fetch("http://api.lapki.vladexa.ru:8000/api/v1/atms/distance", {
+            const req = await fetch("https://api.lapki.vladexa.ru:8000/api/v1/atms/distance", {
                 "body": JSON.stringify([suc.coords.longitude, suc.coords.latitude]),
                 "headers": {
                     "content-type": "application/json"
