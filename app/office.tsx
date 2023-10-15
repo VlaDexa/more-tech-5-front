@@ -1,5 +1,5 @@
 "use client";
-import { AtmsService, SalepointService } from "@/openapi";
+import { AtmShow, AtmsService, SalepointService } from "@/openapi";
 import { useEffect, useMemo, useState } from "react";
 import Znak from "@/public/znak.svg";
 import Info from "@/public/info.svg";
@@ -12,9 +12,10 @@ export enum Type {
 async function getInfo(id: string, type: Type): Promise<{ address: string, distance: number, loaded: boolean }> {
     switch (type) {
         case Type.Atm: {
-            const req = await AtmsService.getAtmApiV1AtmsGet(id);
+            const req = await fetch(`http://api.lapki.vladexa.ru:8000/api/v1/atms/?id=${id}`);
+            const point: AtmShow = await req.json();
             return {
-                address: req.address,
+                address: point.address,
                 distance: 180,
                 loaded: Math.random() > 0.5
             }
@@ -34,9 +35,9 @@ async function getInfo(id: string, type: Type): Promise<{ address: string, dista
 export default function Office(props: { id: string, type: Type, distance: number }) {
     const [info, setInfo] = useState<Awaited<ReturnType<typeof getInfo>> | undefined>(undefined);
     useEffect(() => { getInfo(props.id, props.type).then(info => setInfo(info)) }, [props.id, props.type]);
-    const address = useMemo(() => <address className="flex flex-row rounded-[10px] hover:bg-vtb-gray group px-[10px] py-[6px]">
+    const address = useMemo(() => <address className="flex flex-row rounded-[10px] hover:bg-vtb-gray group px-[10px] py-[6px] gap-2">
         <Image src={Znak} alt="" />
-        <div className="flex flex-col">
+        <div className="flex flex-col flex-grow">
             <span className="text-xl group-hover:font-bold">{info?.address}</span>
             {info?.loaded ? <></> : <span className="text-[#CA181F] flex flex-row">
                 <Image src={Info} alt="Внимание" />

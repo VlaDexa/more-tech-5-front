@@ -8,8 +8,8 @@ import Switch from "../../public/switch.svg";
 import Button, { Type } from "../button";
 import Checkbox from "../checkbox";
 import { VTB_Font } from "../vtb_font";
-import { SalepointService, SalepointShow } from "@/openapi";
-import Office, {Type as OfficeType} from "../office";
+import { AtmShowWithDistance, AtmsService, SalepointService, SalepointShow, SalepointShowWithDistance } from "@/openapi";
+import Office, { Type as OfficeType } from "../office";
 
 function SearchBar(props: HTMLAttributes<HTMLInputElement> & { onSubmit?: HTMLAttributes<HTMLFormElement>["onSubmit"] }) {
     return <form onSubmit={(event) => {
@@ -54,29 +54,41 @@ export default function Panel() {
     const alertEvent: Event = useMemo(() => new Event("more:dollar-alert"), []);
     const showAlert = useCallback(() => window.dispatchEvent(alertEvent), [alertEvent]);
 
-    
-    const [offices, setOffices] = useState<(SalepointShow & {id: string, distance_to_you: number})[] | undefined>(undefined);
+
+    const [offices, setOffices] = useState<SalepointShowWithDistance[] | undefined>(undefined);
     useEffect(() => {
-            const pos = navigator.geolocation.getCurrentPosition(async (suc) => {
-                const sales = await fetch("http://api.lapki.vladexa.ru:8000/api/v1/salepoint/distance", {
-                    "headers": {
-                      "accept": "application/json",
-                      "accept-language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
-                      "cache-control": "no-cache",
-                      "content-type": "application/json",
-                      "pragma": "no-cache"
-                    },
-                    "referrer": "http://api.lapki.vladexa.ru:8000/docs",
-                    "referrerPolicy": "strict-origin-when-cross-origin",
-                    "body": JSON.stringify([suc.coords.longitude, suc.coords.latitude]),
-                    "method": "POST",
-                    "mode": "cors",
-                    "credentials": "omit"
-                  });
-                  const salesJ = await sales.json();
-                  setOffices(salesJ);
-            }, () => {});
+        navigator.geolocation.getCurrentPosition(async (suc) => {
+            const sales = await fetch("http://api.lapki.vladexa.ru:8000/api/v1/salepoint/distance", {
+                "body": JSON.stringify([suc.coords.longitude, suc.coords.latitude]),
+                "headers": {
+                    "content-type": "application/json"
+                },
+                "method": "POST",
+            });
+            const salesJ = await sales.json();
+            // const salesJ = await SalepointService.findClosestOfficesApiV1SalepointDistancePost([suc.coords.longitude, suc.coords.latitude]);
+            setOffices(salesJ);
+        }, () => { });
     }, []);
+    const [atms, setAtms] = useState<AtmShowWithDistance[] | undefined>(undefined);
+    useEffect(() => {
+        navigator.geolocation.getCurrentPosition(async suc => {
+
+            const req = await fetch("http://api.lapki.vladexa.ru:8000/api/v1/atms/distance", {
+                "body": JSON.stringify([suc.coords.longitude, suc.coords.latitude]),
+                "headers": {
+                    "content-type": "application/json"
+                },
+                "method": "POST",
+            });
+            const atm = await req.json();
+            // const atm = await AtmsService.findClosestAtmsApiV1AtmsDistancePost([suc.coords.longitude, suc.coords.latitude])
+            setAtms(atm)
+        }, () => { })
+    }, [])
+
+    console.log('atms - ' , atms);
+    console.log('offices - ', offices)
 
     return <search className="px-[18px] py-[30px] w-1/4 absolute z-[200] bg-white rounded-[20px] top-[40px] left-[48px] overflow-y-scroll mb-10 h-[90%]" aria-label="Фильтры">
         <SearchBar></SearchBar>
@@ -315,11 +327,12 @@ export default function Panel() {
                     </ul>
             }
         </details>
-        {offices ? <>
-        <h2 className="mt-[30px] text-[#6C6C6C] text-normal">Ближайшие отделения</h2>
-        <ul className="flex flex-col gap-[18px] mt-[22px]">
-            {offices.map(el => <Office key={el.id} id={el.id} type={OfficeType.Office} distance={el.distance_to_you}/>)}
-        </ul></>
+        {(showsFlags[0] && offices) || (showsFlags[1] && atms) ? <>
+            <h2 className="mt-[30px] text-[#6C6C6C] text-normal">Ближайшие {showsFlags[0] ? "отделения" : "банкоматы"}</h2>
+            <ul className="flex flex-col gap-[18px] mt-[22px]">
+                {(showsFlags[0] ? offices! : atms!).map(el => <Office key={el.id} id={el.id} type={showsFlags[0] ? OfficeType.Office : OfficeType.Atm} distance={el.distance_to_you * 1482} />)}
+            </ul>
+        </>
             : <></>}
     </search >
 }
