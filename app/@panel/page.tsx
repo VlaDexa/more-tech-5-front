@@ -170,7 +170,6 @@ export default function Panel(props: { onChange?: (filters: Filters) => any }) {
         </ul>
         <details className={`marker:text-vtb-blue ${VTB_Font.className} mt-4`}>
             <summary>Фильтры</summary>
-
             {
                 showsFlags[0] ?
                     <ul className="sidebar-selects">

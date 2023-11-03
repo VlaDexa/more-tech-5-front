@@ -1,9 +1,9 @@
 "use client";
-import { AtmShow, AtmsService, SalepointService } from "@/openapi";
-import { useEffect, useMemo, useState } from "react";
+import { AtmShow, ApiError } from "@/openapi";
 import Znak from "@/public/znak.svg";
 import Info from "@/public/info.svg";
 import Image from "next/image";
+import useSWR, {Fetcher} from 'swr'
 
 export enum Type {
     Atm, Office
@@ -42,10 +42,13 @@ async function getInfo(id: string, type: Type): Promise<{ address: string, dista
     }
 }
 
-export default function Office(props: { id: string, type: Type, distance: number }) {
-    const [info, setInfo] = useState<Awaited<ReturnType<typeof getInfo>> | undefined>(undefined);
-    useEffect(() => { getInfo(props.id, props.type).then(info => setInfo(info)) }, [props.id, props.type]);
-    const address = useMemo(() => <address className="flex flex-row rounded-[10px] hover:bg-vtb-gray group px-[10px] py-[6px] gap-2">
+const Office = (props: { id: string, type: Type, distance: number }) => {
+    const fetcher: Fetcher<Awaited<ReturnType<typeof getInfo>>, [string, Type]> = ([id, type]) => getInfo(id, type);
+    const {data: info, error, isLoading: loading} = useSWR([props.id, props.type], fetcher);
+
+    if (!info || error || loading) return <></>;
+
+    const address = <address className="flex flex-row rounded-[10px] hover:bg-vtb-gray group px-[10px] py-[6px] gap-2">
         <Image src={Znak} alt="" />
         <div className="flex flex-col flex-grow">
             <span className="text-xl group-hover:font-bold">{info?.address}</span>
@@ -55,7 +58,9 @@ export default function Office(props: { id: string, type: Type, distance: number
             </span>}
         </div>
         <span className="text-xl text-vtb-blue">{props.distance === 0 ? Math.floor(Math.random() * 500) : props.distance} м</span>
-    </address>, [info?.address, info?.loaded, props.distance]);
+    </address>;
     // console.log("info: ", info);
-    return info ? address : <></>
+    return address;
 }
+
+export default Office;
